@@ -13,7 +13,7 @@ public class App {
         Display.createResizableWindows(true);
         window = Display.createWindow(800, 600, "App");
         Layer l = new Layer("/home/noob/Downloads/Wallpaper.jpg");
-        window.addLayer(0, 0, l, true);
+        window.addLayer(0, 0, l, false);
     }
     public void loop() {
         timer1.reset();

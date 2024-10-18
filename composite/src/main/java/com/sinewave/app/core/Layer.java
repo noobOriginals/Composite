@@ -9,9 +9,9 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 public class Layer {
-    private BufferedImage image;
+    private BufferedImage image, originalImage;
     private int x, y;
-    private boolean visible, rescale;
+    private boolean visible, rescaled;
     public Layer(String path) {
         try {
             image = ImageIO.read(new File(path));
@@ -24,6 +24,7 @@ public class Layer {
             }
             e.printStackTrace();
         }
+        originalImage = image;
         setPos(0, 0);
         show();
         originalScale();
@@ -43,14 +44,16 @@ public class Layer {
     public boolean isVisible() {
         return visible;
     }
-    public void rescale() {
-        rescale = true;
+    public void rescale(float scale) {
+        scale(scale);
+        rescaled = true;
     }
     public void originalScale() {
-        rescale = false;
+        image = originalImage;
+        rescaled = false;
     }
     public boolean isRescaled() {
-        return rescale;
+        return rescaled;
     }
     public void setPos(int x, int y) {
         this.x = x;
@@ -79,7 +82,6 @@ public class Layer {
         }
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(image, x, y, (int)(image.getWidth() * scale), (int)(image.getHeight() * scale), null);
-        //g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, null);
     }
     public BufferedImage getImage() {
         return image;
@@ -90,7 +92,7 @@ public class Layer {
         }
         g2d.drawImage(image, x, y, image.getWidth(), image.getHeight(), null);
     }
-    public void draw(Draw draw) {
+    public void drawInside(Draw draw) {
         draw.call(image);
     }
 

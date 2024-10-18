@@ -39,16 +39,7 @@ public class Window {
             if (!layer.isVisible()) {
                 continue;
             }
-            if (!layer.isRescaled()) {
-                layer.draw(g2d);
-            }
-            float scale;
-            if (Math.abs(image.getWidth() - layer.getWidth()) > Math.abs(image.getHeight() - layer.getHeight())) {
-                scale = (float) image.getWidth() / layer.getWidth();
-            } else {
-                scale = (float) image.getHeight() / layer.getHeight();
-            }
-            layer.drawScaled(g2d, scale);
+            layer.draw(g2d);
         }
     }
     public void refresh() {
@@ -59,7 +50,13 @@ public class Window {
     public void addLayer(int x, int y, Layer layer, boolean rescale) {
         layer.setPos(x, y);
         if (rescale) {
-            layer.rescale();
+            float scale;
+            if (Math.abs(image.getWidth() - layer.getWidth()) > Math.abs(image.getHeight() - layer.getHeight())) {
+                scale = (float) image.getWidth() / layer.getWidth();
+            } else {
+                scale = (float) image.getHeight() / layer.getHeight();
+            }
+            layer.rescale(scale);
         } else {
             layer.originalScale();
         }

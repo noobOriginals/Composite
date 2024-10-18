@@ -30,8 +30,8 @@ public class Timer implements Runnable {
         long startTime = System.nanoTime();
         while ((System.nanoTime() - startTime) < time * unit) {}
     }
-    public void waitUntil(ConditionProvder provider) {
-        while (!provider.getCondition()) {}
+    public void waitUntil(ConditionCheck conditionCheck) {
+        while (!conditionCheck.call()) {}
     }
 
     public void waitThenRunSeparately(int time, int unit, Action action) {
@@ -41,8 +41,8 @@ public class Timer implements Runnable {
         threadTask = "waitAndRun";
         startThread();
     }
-    public void waitUntilThenRunSeparately(ConditionProvder provider, Action action) {
-        threadedCondition = provider;
+    public void waitUntilThenRunSeparately(ConditionCheck conditionCheck, Action action) {
+        threadedConditionCheck = conditionCheck;
         threadedAction = action;
         threadTask = "waitUntilAndRun";
         startThread();
@@ -50,7 +50,7 @@ public class Timer implements Runnable {
     
     // Threading
     private String threadTask;
-    private ConditionProvder threadedCondition;
+    private ConditionCheck threadedConditionCheck;
     private Action threadedAction;
     private int threadedWaitTime;
     private int threadedTimeUnit;
@@ -67,7 +67,7 @@ public class Timer implements Runnable {
                 threadedAction.call();
                 return;
             case "waitUntilAndRun":
-                while (!threadedCondition.getCondition()) {}
+                while (!threadedConditionCheck.call()) {}
                 threadedAction.call();
                 return;
             
@@ -81,9 +81,7 @@ public class Timer implements Runnable {
         public void call();
     }
 
-    public class ConditionProvder {
-        public boolean getCondition() {
-            return true;
-        }
+    public interface ConditionCheck {
+        public boolean call();
     }
 }
