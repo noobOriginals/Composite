@@ -2,8 +2,11 @@ package com.sinewave.app.core;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -12,14 +15,17 @@ import javax.swing.JLabel;
 public class Window {
     private JFrame window;
     private BufferedImage image;
+    private Keys keys;
     private int[] pixels;
     private ArrayList<Layer> layers = new ArrayList<>();
     Window(int width, int height, String title, boolean resizable) {
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        keys = new Keys();
         window = new JFrame(title);
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setResizable(resizable);
         window.add(new JLabel(new ImageIcon(image)));
+        window.addKeyListener(keys);
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
@@ -91,6 +97,19 @@ public class Window {
             refresh();
         }
     }
+    public boolean keyPressed(int key) {
+        return keys.keyPressed(key);
+    }
+    public boolean keyPressed(char key) {
+        return keys.keyPressed(key);
+    }
+    public boolean shouldClose() {
+        if (window.isShowing()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     public int getWidth() {
         return image.getWidth();
     }
@@ -100,19 +119,15 @@ public class Window {
     BufferedImage getImage() {
         return image;
     }
-    public float updatePixels(UpdatePixels update) {
-        long startTime = System.nanoTime();
+    @Deprecated
+    public void updatePixels(UpdatePixels update) {
         pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
         update.call(pixels);
         image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
-        long endTime = System.nanoTime() - startTime;
-        return endTime / 1000000.0f;
     }
-    public float updateImage(UpdateImage update) {
-        long startTime = System.nanoTime();
+    @Deprecated
+    public void updateImage(UpdateImage update) {
         update.call(image);
-        long endTime = System.nanoTime() - startTime;
-        return endTime / 1000000.0f;
     }
     @FunctionalInterface
     public interface UpdatePixels {
@@ -125,5 +140,38 @@ public class Window {
     @FunctionalInterface
     public interface Draw {
         public void call(Graphics2D g2d);
+    }
+
+    private class Keys implements KeyListener {
+        private HashMap<String, Boolean> keysByChar = new HashMap<>();
+        private HashMap<Integer, Boolean> keysByCode = new HashMap<>();
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            keysByChar.put((e.getKeyChar() + "").toLowerCase(), true);
+            keysByCode.put(e.getKeyCode(), true);
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            keysByChar.put((e.getKeyChar() + "").toLowerCase(), false);
+            keysByCode.put(e.getKeyCode(), false);
+        }
+
+        @Override
+        public void keyTyped(KeyEvent e) {}
+
+        public boolean keyPressed(char key) {
+            if (!keysByChar.containsKey((key + "").toLowerCase())) {
+                return false;
+            }
+            return keysByChar.get((key + "").toLowerCase());
+        }
+        public boolean keyPressed(int key) {
+            if (!keysByCode.containsKey(key)) {
+                return false;
+            }
+            return keysByCode.get(key);
+        }
     }
 }
