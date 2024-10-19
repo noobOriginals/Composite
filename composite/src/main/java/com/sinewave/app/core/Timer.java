@@ -2,7 +2,7 @@ package com.sinewave.app.core;
 
 public class Timer implements Runnable {
     // Units
-    public static int UNIT_NANOS = 1, UNIT_MILLIS = 1000000, UNIT_SECONDS = UNIT_MILLIS * 1000, UNIT_MINUTES = UNIT_SECONDS * 60, UNIT_HOURS = UNIT_MINUTES * 60;
+    public static final int UNIT_NANOS = 1, UNIT_MILLIS = 1000000, UNIT_SECONDS = UNIT_MILLIS * 1000, UNIT_MINUTES = UNIT_SECONDS * 60, UNIT_HOURS = UNIT_MINUTES * 60;
 
     private long startTime;
     public Timer() {

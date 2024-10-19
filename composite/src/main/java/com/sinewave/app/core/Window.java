@@ -1,5 +1,6 @@
 package com.sinewave.app.core;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
@@ -15,16 +16,18 @@ import javax.swing.JLabel;
 public class Window {
     private JFrame window;
     private BufferedImage image;
+    private ImageIcon imageIcon;
     private Keys keys;
     private int[] pixels;
     private ArrayList<Layer> layers = new ArrayList<>();
     Window(int width, int height, String title, boolean resizable) {
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         keys = new Keys();
+        imageIcon = new ImageIcon(image);
         window = new JFrame(title);
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setResizable(resizable);
-        window.add(new JLabel(new ImageIcon(image)));
+        window.add(new JLabel(imageIcon));
         window.addKeyListener(keys);
         window.pack();
         window.setLocationRelativeTo(null);
@@ -38,6 +41,10 @@ public class Window {
             refresh();
         }
     }
+    public void clear() {
+        image = new BufferedImage(window.getWidth(), window.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        imageIcon.setImage(image);
+    }
     public void drawLayers() {
         Graphics2D g2d = image.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -47,11 +54,26 @@ public class Window {
             }
             layer.draw(g2d);
         }
+        g2d.dispose();
     }
+    private int frames = 0, FPS = 0;
+    private long lastTime = System.nanoTime();
     public void refresh() {
+        if (showFPS) {
+            Graphics2D g2d = image.createGraphics();
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.drawString("FPS: " + FPS, 10, 20);
+            g2d.dispose();
+        }
+        if (System.nanoTime() - lastTime > 1000000000) {
+            FPS = frames;
+            frames = 0;
+            lastTime = System.nanoTime();
+        }
         window.invalidate();
         window.revalidate();
         window.repaint();
+        frames++;
     }
     public void addLayer(int x, int y, Layer layer, boolean rescale) {
         layer.setPos(x, y);
@@ -104,11 +126,21 @@ public class Window {
         return keys.keyPressed(key);
     }
     public boolean shouldClose() {
-        if (window.isShowing()) {
+        if (window.isDisplayable()) {
             return false;
         } else {
             return true;
         }
+    }
+    private boolean showFPS = false;
+    public void showFPS() {
+        showFPS = true;
+    }
+    public void hideFPS() {
+        showFPS = false;
+    }
+    public void close() {
+        window.dispose();
     }
     public int getWidth() {
         return image.getWidth();

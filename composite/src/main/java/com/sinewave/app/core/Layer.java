@@ -59,6 +59,10 @@ public class Layer {
         this.x = x;
         this.y = y;
     }
+    public void move(int x, int y) {
+        this.x += x;
+        this.y += y;
+    }
     public int[] getPos(int[] pos) {
         pos[0] = x;
         pos[1] = y;
