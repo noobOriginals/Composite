@@ -70,8 +70,8 @@ public class Window {
             frames = 0;
             lastTime = System.nanoTime();
         }
-        window.invalidate();
-        window.revalidate();
+        // window.invalidate();
+        // window.revalidate();
         window.repaint();
         frames++;
     }

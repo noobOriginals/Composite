@@ -18,7 +18,8 @@ public class App {
         loop.setExitCondition(this::exitCondition);
         loop.setLoopIteration(this::loopIteration);
         loop.setExitOperation(this::exitOperation);
-        loop.setTargetFps(120);
+        loop.setTargetFps(240);
+        loop.capFrames(true);
         window.showFPS();
     }
     public boolean exitCondition() {

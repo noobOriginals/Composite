@@ -2,6 +2,7 @@ package com.sinewave.app.core;
 
 public class DeltaTimedLoop implements Runnable {
     private boolean threaded = false;
+    private boolean fpsCap = false;
     private int targetFps;
     private ExitCondition condition;
     private LoopIteration loop;
@@ -29,6 +30,9 @@ public class DeltaTimedLoop implements Runnable {
     public void setTargetFps(int targetFps) {
         this.targetFps = targetFps;
     }
+    public void capFrames(boolean cap) {
+        fpsCap = cap;
+    }
 
     public void start() {
         if (threaded) {
@@ -38,11 +42,21 @@ public class DeltaTimedLoop implements Runnable {
         long lastTime, currentTime;
         float deltaTime;
         lastTime = System.nanoTime();
+        long targetLoopTime = (long)(1000000000.0f / targetFps);
         while (!condition.test()) {
             currentTime = System.nanoTime();
             deltaTime = currentTime - lastTime;
             lastTime = currentTime;
-            loop.run(deltaTime / (1000000000.0f / targetFps));
+            loop.run((!fpsCap) ? deltaTime / targetLoopTime : 1);
+            if (fpsCap) {
+                long time = System.nanoTime() - lastTime;
+                long sleepTime = (targetLoopTime > time) ? targetLoopTime - time : 0;
+                try {
+                    Thread.sleep(sleepTime / Timer.UNIT_MILLIS);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
         operation.run();
     }
