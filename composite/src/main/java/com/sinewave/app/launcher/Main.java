@@ -1,4 +1,4 @@
-package com.sinewave.app.testing;
+package com.sinewave.app.launcher;
 
 public class Main {
     public static void main(String[] args) {

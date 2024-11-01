@@ -1,4 +1,4 @@
-package com.sinewave.app.core;
+package com.sinewave.app.core.graphics;
 
 import java.util.HashMap;
 

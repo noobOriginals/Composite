@@ -1,4 +1,4 @@
-package com.sinewave.app.core;
+package com.sinewave.app.core.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -62,7 +62,7 @@ public class Window {
         if (showFPS) {
             Graphics2D g2d = image.createGraphics();
             g2d.setColor(Color.DARK_GRAY);
-            g2d.drawString("FPS: " + FPS, 10, 20);
+            g2d.drawString("FPS: " + FPS, 20, 40);
             g2d.dispose();
         }
         if (System.nanoTime() - lastTime > 1000000000) {
@@ -85,8 +85,6 @@ public class Window {
                 scale = (float) image.getHeight() / layer.getHeight();
             }
             layer.rescale(scale);
-        } else {
-            layer.originalScale();
         }
         layers.add(layer);
     }

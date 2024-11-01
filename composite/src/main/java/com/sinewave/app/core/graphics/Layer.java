@@ -1,4 +1,4 @@
-package com.sinewave.app.core;
+package com.sinewave.app.core.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -44,9 +44,10 @@ public class Layer {
     public boolean isVisible() {
         return visible;
     }
-    public void rescale(float scale) {
+    public Layer rescale(float scale) {
         scale(scale);
         rescaled = true;
+        return this;
     }
     public void originalScale() {
         image = originalImage;

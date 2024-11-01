@@ -1,4 +1,4 @@
-package com.sinewave.app.core;
+package com.sinewave.app.core.graphics;
 
 public class DeltaTimedLoop implements Runnable {
     private boolean threaded = false;

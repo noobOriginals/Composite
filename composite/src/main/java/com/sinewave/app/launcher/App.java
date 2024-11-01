@@ -1,9 +1,11 @@
-package com.sinewave.app.testing;
+package com.sinewave.app.launcher;
 
-import com.sinewave.app.core.DeltaTimedLoop;
-import com.sinewave.app.core.Display;
-import com.sinewave.app.core.Layer;
-import com.sinewave.app.core.Window;
+import javax.swing.SwingUtilities;
+
+import com.sinewave.app.core.graphics.DeltaTimedLoop;
+import com.sinewave.app.core.graphics.Display;
+import com.sinewave.app.core.graphics.Layer;
+import com.sinewave.app.core.graphics.Window;
 
 public class App {
     private Window window;
@@ -26,21 +28,23 @@ public class App {
         return (window.keyPressed('x') || window.shouldClose());
     }
     public void loopIteration(float deltaTimeMultiplier) {
-        window.clear();
-        window.drawLayers();
-        window.refresh();
-        if (window.keyPressed('w')) {
-            layer.move(0, (int)(-3 * deltaTimeMultiplier));
-        }
-        if (window.keyPressed('s')) {
-            layer.move(0, (int)(3 * deltaTimeMultiplier));
-        }
-        if (window.keyPressed('a')) {
-            layer.move((int)(-3 * deltaTimeMultiplier), 0);
-        }
-        if (window.keyPressed('d')) {
-            layer.move((int)(3 * deltaTimeMultiplier), 0);
-        }
+        SwingUtilities.invokeLater(() -> {
+            window.clear();
+            window.drawLayers();
+            window.refresh();
+            if (window.keyPressed('w')) {
+                layer.move(0, (int)(-3 * deltaTimeMultiplier));
+            }
+            if (window.keyPressed('s')) {
+                layer.move(0, (int)(3 * deltaTimeMultiplier));
+            }
+            if (window.keyPressed('a')) {
+                layer.move((int)(-3 * deltaTimeMultiplier), 0);
+            }
+            if (window.keyPressed('d')) {
+                layer.move((int)(3 * deltaTimeMultiplier), 0);
+            }
+        });
     }
     public void exitOperation() {
         window.close();
