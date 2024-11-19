@@ -12,6 +12,7 @@ import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 public class Window {
     private JFrame window;
@@ -42,38 +43,44 @@ public class Window {
         }
     }
     public void clear() {
-        image = new BufferedImage(window.getWidth(), window.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        imageIcon.setImage(image);
+        SwingUtilities.invokeLater(() -> {
+            image = new BufferedImage(window.getWidth(), window.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            imageIcon.setImage(image);
+        });
     }
     public void drawLayers() {
-        Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        for (Layer layer : layers) {
-            if (!layer.isVisible()) {
-                continue;
+        SwingUtilities.invokeLater(() -> {
+            Graphics2D g2d = image.createGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            for (Layer layer : layers) {
+                if (!layer.isVisible()) {
+                    continue;
+                }
+                layer.draw(g2d);
             }
-            layer.draw(g2d);
-        }
-        g2d.dispose();
+            g2d.dispose();
+        });
     }
     private int frames = 0, FPS = 0;
     private long lastTime = System.nanoTime();
     public void refresh() {
-        if (showFPS) {
-            Graphics2D g2d = image.createGraphics();
-            g2d.setColor(Color.DARK_GRAY);
-            g2d.drawString("FPS: " + FPS, 20, 40);
-            g2d.dispose();
-        }
-        if (System.nanoTime() - lastTime > 1000000000) {
-            FPS = frames;
-            frames = 0;
-            lastTime = System.nanoTime();
-        }
-        // window.invalidate();
-        // window.revalidate();
-        window.repaint();
-        frames++;
+        SwingUtilities.invokeLater(() -> {
+            if (showFPS) {
+                Graphics2D g2d = image.createGraphics();
+                g2d.setColor(Color.DARK_GRAY);
+                g2d.drawString("FPS: " + FPS, 20, 40);
+                g2d.dispose();
+            }
+            if (System.nanoTime() - lastTime > 1000000000) {
+                FPS = frames;
+                frames = 0;
+                lastTime = System.nanoTime();
+            }
+            // window.invalidate();
+            // window.revalidate();
+            window.repaint();
+            frames++;
+        });
     }
     public void addLayer(int x, int y, Layer layer, boolean rescale) {
         layer.setPos(x, y);
@@ -88,34 +95,37 @@ public class Window {
         }
         layers.add(layer);
     }
+    @Deprecated
     public void addLayerAndRefresh(int xpos, int ypos, Layer layer, boolean rescale) {
-        if (rescale) {
-            layer.setPos(xpos, ypos);
-            float scale;
-            if (Math.abs(image.getWidth() - layer.getWidth()) > Math.abs(image.getHeight() - layer.getHeight())) {
-                scale = (float) image.getWidth() / layer.getWidth();
+        SwingUtilities.invokeLater(() -> {
+            if (rescale) {
+                layer.setPos(xpos, ypos);
+                float scale;
+                if (Math.abs(image.getWidth() - layer.getWidth()) > Math.abs(image.getHeight() - layer.getHeight())) {
+                    scale = (float) image.getWidth() / layer.getWidth();
+                } else {
+                    scale = (float) image.getHeight() / layer.getHeight();
+                }
+                // layer.scale(scale);
+                // int startx = (xpos < 0) ? 0 : xpos;
+                // int starty = (ypos < 0) ? 0 : ypos;
+                // int width = layer.getWidth() - Math.abs(xpos);
+                // int height = layer.getHeight() - Math.abs(ypos);
+                // image.setRGB(startx, starty, width, height, layer.getRGB((xpos < 0) ? -xpos : 0, (ypos < 0) ? -ypos : 0, width, height), 0, width);
+                Graphics2D g2 = image.createGraphics();
+                // g2.drawImage(layer.getImage(), xpos, ypos, null);
+                layer.drawScaled(g2, scale);
+                g2.dispose();
+                refresh();
             } else {
-                scale = (float) image.getHeight() / layer.getHeight();
+                layer.setPos(xpos, ypos);
+                Graphics2D g2 = image.createGraphics();
+                // g2.drawImage(layer.getImage(), xpos, ypos, null);
+                layer.draw(g2);
+                g2.dispose();
+                refresh();
             }
-            // layer.scale(scale);
-            // int startx = (xpos < 0) ? 0 : xpos;
-            // int starty = (ypos < 0) ? 0 : ypos;
-            // int width = layer.getWidth() - Math.abs(xpos);
-            // int height = layer.getHeight() - Math.abs(ypos);
-            // image.setRGB(startx, starty, width, height, layer.getRGB((xpos < 0) ? -xpos : 0, (ypos < 0) ? -ypos : 0, width, height), 0, width);
-            Graphics2D g2 = image.createGraphics();
-            // g2.drawImage(layer.getImage(), xpos, ypos, null);
-            layer.drawScaled(g2, scale);
-            g2.dispose();
-            refresh();
-        } else {
-            layer.setPos(xpos, ypos);
-            Graphics2D g2 = image.createGraphics();
-            // g2.drawImage(layer.getImage(), xpos, ypos, null);
-            layer.draw(g2);
-            g2.dispose();
-            refresh();
-        }
+        });
     }
     public boolean keyPressed(int key) {
         return keys.keyPressed(key);
@@ -151,13 +161,17 @@ public class Window {
     }
     @Deprecated
     public void updatePixels(UpdatePixels update) {
-        pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-        update.call(pixels);
-        image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+        SwingUtilities.invokeLater(() -> {
+            pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+            update.call(pixels);
+            image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+        });
     }
     @Deprecated
     public void updateImage(UpdateImage update) {
-        update.call(image);
+        SwingUtilities.invokeLater(() -> {
+            update.call(image);
+        });
     }
     @FunctionalInterface
     public interface UpdatePixels {

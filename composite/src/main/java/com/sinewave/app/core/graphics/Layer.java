@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 public class Layer {
     private BufferedImage image, originalImage;
     private int x, y;
-    private boolean visible, rescaled;
+    private boolean visible;
     public Layer(String path) {
         try {
             image = ImageIO.read(new File(path));
@@ -46,15 +46,10 @@ public class Layer {
     }
     public Layer rescale(float scale) {
         scale(scale);
-        rescaled = true;
         return this;
     }
     public void originalScale() {
         image = originalImage;
-        rescaled = false;
-    }
-    public boolean isRescaled() {
-        return rescaled;
     }
     public void setPos(int x, int y) {
         this.x = x;
@@ -74,19 +69,19 @@ public class Layer {
     }
     @Deprecated
     public void scale(float scale) {
-        BufferedImage resized = new BufferedImage((int)(image.getWidth() * scale), (int)(image.getHeight() * scale), image.getType());
-        Graphics2D g = resized.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.drawImage(image, 0, 0, (int)(image.getWidth() * scale), (int)(image.getHeight() * scale), 0, 0, image.getWidth(), image.getHeight(), null);
-        g.dispose();
+        BufferedImage resized = new BufferedImage((int)(originalImage.getWidth() * scale), (int)(originalImage.getHeight() * scale), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resized.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2d.drawImage(originalImage, x, y, (int)(originalImage.getWidth() * scale), (int)(originalImage.getHeight() * scale), null);
+        g2d.dispose();
         image = resized;
     }
     public void drawScaled(Graphics2D g2d, float scale) {
         if (!visible) {
             return;
         }
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(image, x, y, (int)(image.getWidth() * scale), (int)(image.getHeight() * scale), null);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g2d.drawImage(originalImage, x, y, (int)(originalImage.getWidth() * scale), (int)(originalImage.getHeight() * scale), null);
     }
     public BufferedImage getImage() {
         return image;
