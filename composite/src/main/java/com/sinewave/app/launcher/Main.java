@@ -5,5 +5,6 @@ public class Main {
         App2 app = new App2();
         app.init();
         app.loop();
+        app.cleanup();
     }
 }
