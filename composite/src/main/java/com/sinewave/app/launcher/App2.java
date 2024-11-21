@@ -61,6 +61,9 @@ public class App2 {
             case "moveRight()":
                 movePlayer(1, 0, 0);
                 return;
+            case "wait()":
+                movePlayer(0, 0, 0);
+                return;
         }
     }
 
