@@ -1,4 +1,4 @@
-package com.sinewave.app.core.io;
+package app.core.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

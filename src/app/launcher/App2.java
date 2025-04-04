@@ -1,13 +1,13 @@
-package com.sinewave.app.launcher;
+package app.launcher;
 
 import java.util.ArrayList;
 
-import com.sinewave.app.core.graphics.Display;
-import com.sinewave.app.core.graphics.FPSCap;
-import com.sinewave.app.core.graphics.Layer;
-import com.sinewave.app.core.graphics.Timer;
-import com.sinewave.app.core.graphics.Window;
-import com.sinewave.app.core.io.File;
+import app.core.graphics.Display;
+import app.core.graphics.FPSCap;
+import app.core.graphics.Layer;
+import app.core.graphics.Timer;
+import app.core.graphics.Window;
+import app.core.io.File;
 
 public class App2 {
     private Window window;

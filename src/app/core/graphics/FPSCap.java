@@ -1,4 +1,4 @@
-package com.sinewave.app.core.graphics;
+package app.core.graphics;
 
 public class FPSCap {
     private long lastTime = 0, currentTime = 0, deltaTime = 0, sleepTime = 0, targetLoopTime = 0;

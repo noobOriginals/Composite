@@ -1,9 +1,9 @@
-package com.sinewave.app.launcher;
+package app.launcher;
 
-import com.sinewave.app.core.graphics.DeltaTimedLoop;
-import com.sinewave.app.core.graphics.Display;
-import com.sinewave.app.core.graphics.Layer;
-import com.sinewave.app.core.graphics.Window;
+import app.core.graphics.DeltaTimedLoop;
+import app.core.graphics.Display;
+import app.core.graphics.Layer;
+import app.core.graphics.Window;
 
 public class App {
     private Window window;
@@ -12,14 +12,14 @@ public class App {
     public void init() {
         Display.createResizableWindows(true);
         window = Display.createWindow(800, 600, "App");
-        layer = new Layer("/home/noob/Downloads/Wallpaper.jpg");
+        layer = new Layer("C:/Users/noob/Downloads/pto.jpeg");
         window.addLayer(0, 0, layer, true);
         loop = DeltaTimedLoop.createLoop();
         loop.setExitCondition(this::exitCondition);
         loop.setLoopIteration(this::loopIteration);
         loop.setExitOperation(this::exitOperation);
         loop.setTargetFps(240);
-        loop.capFrames(true);
+        loop.capFrames(false);
         window.showFPS();
     }
     public boolean exitCondition() {
@@ -48,5 +48,9 @@ public class App {
     }
     public void loop() {
         loop.start();
+    }
+    public void cleanup() {
+        window.close();
+        System.exit(0);
     }
 }

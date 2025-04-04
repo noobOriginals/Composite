@@ -1,6 +1,4 @@
-/composite/target
-/composite/src/test
-.DS_Store
+/build/
+sources.txt
+binaries.txt
 .vscode
-Layers.txt
-*.jar

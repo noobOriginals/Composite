@@ -1,4 +1,4 @@
-package com.sinewave.app.core.graphics;
+package app.core.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

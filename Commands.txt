@@ -1,6 +1,0 @@
-moveDown()
-moveRight()
-wait()
-moveRight()
-moveDown()
-moveUp()

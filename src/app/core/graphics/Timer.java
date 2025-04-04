@@ -1,4 +1,4 @@
-package com.sinewave.app.core.graphics;
+package app.core.graphics;
 
 public class Timer implements Runnable {
     // Units
@@ -47,14 +47,14 @@ public class Timer implements Runnable {
         threadTask = "waitUntilAndRun";
         startThread();
     }
-    
+
     // Threading
     private String threadTask;
     private ConditionCheck threadedConditionCheck;
     private Action threadedAction;
     private int threadedWaitTime;
     private int threadedTimeUnit;
-    private Thread timerThread; 
+    private Thread timerThread;
     private void startThread() {
         timerThread = new Thread(this, "timerThread");
         timerThread.start();
@@ -63,14 +63,14 @@ public class Timer implements Runnable {
         switch (threadTask) {
             case "waitAndRun":
                 long startTime = System.nanoTime();
-                while ((System.nanoTime() - startTime) < threadedWaitTime * threadedTimeUnit) {}    
+                while ((System.nanoTime() - startTime) < threadedWaitTime * threadedTimeUnit) {}
                 threadedAction.call();
                 return;
             case "waitUntilAndRun":
                 while (!threadedConditionCheck.call()) {}
                 threadedAction.call();
                 return;
-            
+
             default:
                 return;
         }
